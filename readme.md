@@ -7,3 +7,5 @@ https://obscure.cz/cs
 - Test via `curl localhost:3000`.
 
 Code gets automatically deployed to Sliplane on every push.
+
+Live at https://obscure-rss.sliplane.app.
