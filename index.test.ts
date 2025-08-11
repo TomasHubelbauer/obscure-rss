@@ -1,8 +1,13 @@
 import { expect, test } from "bun:test";
-import "./index";
+if (!process.env.LIVE_SITE) {
+  await import("./index");
+}
 
 test("returns items", async () => {
-  const response = await fetch("http://localhost:3000");
+  const response = await fetch(
+    process.env.LIVE_SITE ?? "http://localhost:3000"
+  );
+
   expect(response.status).toBe(200);
 
   let titleCount = 0;
@@ -19,41 +24,69 @@ test("returns items", async () => {
   const rewriter = new HTMLRewriter()
     .on("channel > title", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         expect(text.text).not.toBeEmpty();
         titleSeen = true;
       },
     })
     .on("channel > description", {
       text(text) {
-        expect(text.text).toBeEmpty();
+        if (!text.text) {
+          return;
+        }
+
+        expect(text.text).not.toBeEmpty();
         descriptionSeen = true;
       },
     })
     .on("channel > lastBuildDate", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         expect(text.text).not.toBeEmpty();
         lastBuildDateSeen = true;
       },
     })
     .on("channel > pubDate", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         expect(text.text).not.toBeEmpty();
         pubDateSeen = true;
       },
     })
     .on("item > title", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         titleCount += 1;
         title = text.text;
       },
     })
     .on("item > description", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         description = text.text;
       },
     })
     .on("item > pubDate", {
       text(text) {
+        if (!text.text) {
+          return;
+        }
+
         pubDate = text.text;
       },
     });
